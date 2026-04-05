@@ -74,6 +74,10 @@ body{font-family:'Barlow',sans-serif;background:var(--charcoal);color:#fff;margi
 .hero-subtitle{font-size:clamp(16px,2vw,20px);line-height:1.7;color:rgba(255,255,255,0.55);max-width:640px;margin-bottom:32px}
 .hero-meta{font-size:12px;color:var(--dim);letter-spacing:0.04em;line-height:1.7}
 .hero-meta strong{color:rgba(255,255,255,0.7)}
+.hero-subhead{font-size:clamp(16px,2vw,21px);line-height:1.6;color:rgba(255,255,255,0.35);max-width:640px;margin-bottom:32px;font-style:italic;letter-spacing:0.01em}
+.hero-subhead em{color:rgba(255,255,255,0.55);font-style:normal}
+.hero-opening{font-size:clamp(15px,1.6vw,18px);line-height:1.9;color:rgba(255,255,255,0.55);max-width:680px;margin-bottom:32px}
+.hero-opening strong{color:rgba(255,255,255,0.9);font-weight:700}
 
 /* ── EVENT STRIP ── */
 .event-strip{border-bottom:1px solid var(--rule);padding:0;display:flex;align-items:stretch;overflow-x:auto}
@@ -137,6 +141,23 @@ body{font-family:'Barlow',sans-serif;background:var(--charcoal);color:#fff;margi
 .evo-axis-label{position:absolute;bottom:4px;font-size:9px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2)}
 .evo-axis-label.left{left:10%}
 .evo-axis-label.right{right:10%}
+
+/* ── EVO CAPTION ── */
+.evo-caption{background:rgba(224,85,85,0.06);border:1px solid rgba(224,85,85,0.2);border-left:3px solid var(--red);padding:20px 24px;margin:24px 0 0;max-width:680px}
+.evo-caption p{font-size:15px;line-height:1.8;color:rgba(255,255,255,0.65);font-style:italic}
+
+/* ── GILDED CAGE ── */
+.gilded-cage{background:var(--card);border:2px solid rgba(245,200,66,0.25);padding:32px;margin:28px 0;position:relative}
+.gilded-cage::before{content:'THE GILDED CAGE';position:absolute;top:-11px;left:24px;background:var(--dark);padding:0 10px;font-size:9px;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;color:var(--yellow)}
+.gilded-cage p{font-size:16px;line-height:1.85;color:rgba(255,255,255,0.6);margin-bottom:16px}
+.gilded-cage p:last-child{margin-bottom:0}
+.gilded-cage strong{color:rgba(255,255,255,0.85);font-weight:700}
+
+/* ── STUCK TAGLINE ── */
+.stuck-tagline{background:var(--charcoal);border:2px solid var(--teal-b);padding:32px 36px;margin:32px 0;text-align:center}
+.stuck-tagline-main{font-family:'Barlow Condensed',sans-serif;font-size:clamp(22px,3.5vw,34px);font-weight:900;text-transform:uppercase;letter-spacing:0.03em;color:#fff;line-height:1.1;margin-bottom:16px}
+.stuck-tagline-main em{color:var(--teal);font-style:normal}
+.stuck-tagline-sub{font-size:15px;line-height:1.7;color:rgba(255,255,255,0.45);max-width:560px;margin:0 auto}
 
 /* ── TIMELINE DIAGRAM ── */
 .timeline-visual{display:flex;align-items:stretch;justify-content:center;gap:0;padding:20px 0}
@@ -323,8 +344,9 @@ body{font-family:'Barlow',sans-serif;background:var(--charcoal);color:#fff;margi
     <section class="hero" id="hero">
       <div class="hero-inner">
         <span class="hero-label">Stirling Business Association · April 30, 2026</span>
-        <h1 class="hero-title">The Confidence<br><em>Gap</em></h1>
-        <p class="hero-subtitle">What happens when capable people get stuck. Not because they lack ability. Because they lack the self-trust to use it outside the one place they built it.</p>
+        <h1 class="hero-title">Don't let I'm stuck<br><em>turn into I gave up.</em></h1>
+        <p class="hero-subhead">...<em>Not giving up is not the same as active progress.</em></p>
+        <p class="hero-opening">Stop lying to yourself. You want the same thing everyone else wants. You just don't want to make the same mess along the way as everybody else. Unfortunately, it's your determination to repair self-trust. This is your first demonstration of that. Time to commit. Time to stop negotiating and make a fucking decision.</p>
         <p class="hero-meta">
           <strong>A live talk and take-home framework by Alex Cooper</strong><br>
           Balcatta, Perth WA · 1 Hour · $15 / Free for SBA Members
@@ -373,6 +395,18 @@ body{font-family:'Barlow',sans-serif;background:var(--charcoal);color:#fff;margi
         <p class="body-copy">The silo you have built starts to become claustrophobic. Uncomfortable. You can feel the walls closing in. But leaving it feels terrifying because of what it invites into your world. Your perspective may be that your entire value is held inside that silo and you cannot create it somewhere else. That is the silo paradox. And it is reinforced by sunk cost: the idea that because you have invested so much into this one area, walking away from it would mean losing everything.</p>
 
         <p class="body-copy">It would not. But your perception tells you otherwise. And that is where we need to start.</p>
+
+        <div class="gilded-cage">
+          <p>Highly capable people get stuck in relatively the same place. You reach a point where the silo you have contributed into started to attribute itself to your capabilities and capacities. You saw the result of that change in the world around you. So you kept contributing into it as a priority. The feedback was that it was building your confidence. It felt like the right move.</p>
+          <p><strong>The issue is you are building a gilded cage.</strong> A prison of your own capabilities that you are trapped in. You have reached the saturation point. Any further contributions cost you a lot but do not provide much return on investment. And now you feel like a snake eating its tail.</p>
+          <p>Paradoxically, you built your own rut. You built your own prison.</p>
+          <p>Where you are stuck is somewhere just above mediocrity and somewhere just below your actual life. And that is where you stay. And time is passing anyway. And that compounds in the wrong direction.</p>
+        </div>
+
+        <div class="stuck-tagline">
+          <div class="stuck-tagline-main">Don't let <em>I'm stuck</em><br>turn into <em>I gave up.</em></div>
+          <p class="stuck-tagline-sub">Not giving up is not the same as active progress.</p>
+        </div>
 
         <!-- SILO DIAGRAM -->
         <div class="diagram-wrap">
@@ -519,6 +553,9 @@ body{font-family:'Barlow',sans-serif;background:var(--charcoal);color:#fff;margi
             </div>
             <div class="evo-axis-label left">Low Confidence</div>
             <div class="evo-axis-label right">Self-Trust →</div>
+          </div>
+          <div class="evo-caption">
+            <p>That's you. Playing small, wondering why your life feels claustrophobic, getting smaller every day, regardless of how much you try and do. And why your best efforts don't even get you close to escaping the comfort zone you've created for yourself — which is actually the rut you're stuck in.</p>
           </div>
         </div>
 
