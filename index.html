@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Confidence Gap — Mini Program Portal</title>
+<meta name="description" content="The Confidence Gap — What happens when capable people get stuck. A framework by Alex Cooper. Stirling Business Association, April 30 2026.">
+<meta name="theme-color" content="#111111">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Barlow+Condensed:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --teal:#5ec5cc;--teal-d:#3aabb3;--teal-p:rgba(94,197,204,0.08);--teal-b:rgba(94,197,204,0.2);
+  --teal-m:#b8e8eb;--teal-pale:#eaf7f8;
+  --red:#e05555;--rp:#fdf1f1;
+  --yellow:#f5c842;--yp:#fef9e7;
+  --green:#27ae60;--gp:#e9f7ef;
+  --purple:#9b59b6;--pp:#f5eef8;
+  --orange:#e67e22;--op:#fef3e8;
+  --charcoal:#111;--dark:#1a1a2e;--ink:#0d0d0d;
+  --card:#1e1e1e;--card-l:#252525;
+  --rule:rgba(255,255,255,0.07);
+  --dim:rgba(255,255,255,0.4);
+  --faint:rgba(255,255,255,0.15);
+  --bright:rgba(255,255,255,0.9);
+  --bg:#f0f0ee;--bg-card:#fff;--bg-rule:#e8e8e6;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--charcoal);color:#fff;margin:0;overflow-x:hidden;display:flex;flex-direction:column;min-height:100vh}
+
+/* ── TOP NAV ── */
+.topnav{background:rgba(17,17,17,0.97);backdrop-filter:blur(8px);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--rule)}
+.topnav-logo{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--teal);text-decoration:none}
+.topnav-logo span{color:rgba(255,255,255,0.25)}
+.topnav-right{display:flex;align-items:center;gap:20px}
+.topnav-event{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.nav-link{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s;background:none;border:none;cursor:pointer}
+.nav-link:hover{color:var(--teal)}
+.hamburger{display:none;cursor:pointer;background:none;border:none;padding:8px;z-index:101}
+.hamburger span{display:block;width:22px;height:2px;background:rgba(255,255,255,0.7);margin:5px 0;transition:all 0.3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* ── LAYOUT ── */
+.shell{display:flex;flex:1;min-height:0}
+.sidebar{width:280px;background:var(--ink);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto;border-right:1px solid var(--rule)}
+.main{flex:1;overflow-y:auto;scroll-behavior:smooth}
+
+/* ── SIDEBAR ── */
+.sb-section{padding:20px 16px 8px;font-size:9px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.18)}
+.sb-item{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;text-decoration:none}
+.sb-item:hover{background:rgba(255,255,255,0.04);border-left-color:rgba(94,197,204,0.3)}
+.sb-item.active{background:rgba(94,197,204,0.08);border-left-color:var(--teal)}
+.sb-item-num{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:900;color:rgba(255,255,255,0.15);min-width:24px}
+.sb-item.active .sb-item-num{color:var(--teal)}
+.sb-item-body{flex:1;min-width:0}
+.sb-item-label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);line-height:1.3}
+.sb-item.active .sb-item-label{color:#fff}
+.sb-item:hover .sb-item-label{color:rgba(255,255,255,0.8)}
+.sb-item-sub{font-size:10px;color:rgba(255,255,255,0.2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-divider{height:1px;background:rgba(255,255,255,0.05);margin:8px 16px}
+.sb-footer{padding:20px 16px;margin-top:auto;border-top:1px solid rgba(255,255,255,0.05)}
+.sb-footer-brand{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--teal);margin-bottom:4px}
+.sb-footer-text{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.5}
+
+/* ── HERO ── */
+.hero{padding:80px 56px 60px;border-bottom:1px solid var(--rule);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 70% 40%,rgba(94,197,204,0.05) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 20% 80%,rgba(224,85,85,0.03) 0%,transparent 60%);pointer-events:none}
+.hero-inner{max-width:900px;position:relative;z-index:1}
+.hero-label{font-size:11px;font-weight:800;letter-spacing:0.3em;text-transform:uppercase;color:var(--teal);margin-bottom:20px;display:block}
+.hero-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(48px,7vw,88px);font-weight:900;text-transform:uppercase;line-height:0.88;letter-spacing:-0.02em;margin-bottom:28px}
+.hero-title em{color:var(--teal);font-style:normal;display:block}
+.hero-subtitle{font-size:clamp(16px,2vw,20px);line-height:1.7;color:rgba(255,255,255,0.55);max-width:640px;margin-bottom:32px}
+.hero-meta{font-size:12px;color:var(--dim);letter-spacing:0.04em;line-height:1.7}
+.hero-meta strong{color:rgba(255,255,255,0.7)}
+
+/* ── EVENT STRIP ── */
+.event-strip{border-bottom:1px solid var(--rule);padding:0;display:flex;align-items:stretch;overflow-x:auto}
+.event-item{padding:20px 32px;border-right:1px solid var(--rule);white-space:nowrap;flex-shrink:0}
+.event-item:last-child{border-right:none}
+.event-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--teal);line-height:1}
+.event-label{font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim);margin-top:3px}
+
+/* ── SECTION SHARED ── */
+.section{padding:80px 56px;border-bottom:1px solid var(--rule)}
+.section-inner{max-width:900px}
+.eyebrow{font-size:10px;font-weight:800;letter-spacing:0.3em;text-transform:uppercase;color:var(--teal);margin-bottom:20px;display:block}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:900;text-transform:uppercase;line-height:0.92;letter-spacing:-0.01em;margin-bottom:24px}
+.section-title em{color:var(--teal);font-style:normal}
+.body-copy{font-size:16px;line-height:1.85;color:rgba(255,255,255,0.6);max-width:680px;margin-bottom:20px}
+.body-copy strong{color:rgba(255,255,255,0.85);font-weight:700}
+
+/* ── PULLQUOTE ── */
+.pullquote{border-left:3px solid var(--teal);padding:20px 0 20px 24px;margin:28px 0;max-width:680px}
+.pullquote p{font-size:18px;line-height:1.7;color:rgba(255,255,255,0.8);font-style:italic}
+.pullquote .attr{font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal-d);margin-top:8px;font-style:normal}
+.pullquote.red{border-left-color:var(--red)}
+.pullquote.red p{color:rgba(255,255,255,0.75)}
+
+/* ── DIAGRAM CONTAINERS ── */
+.diagram-wrap{background:var(--card);border:1px solid var(--rule);padding:40px;margin:32px 0;overflow-x:auto}
+.diagram-label{font-size:9px;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;color:var(--teal);margin-bottom:20px;text-align:center}
+
+/* ── SILO DIAGRAM ── */
+.silo-visual{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;padding:20px 0}
+.silo-box{width:180px;min-height:200px;border:2px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;text-align:center;position:relative}
+.silo-box.stuck{border-color:var(--red);background:rgba(224,85,85,0.06)}
+.silo-box.barrier{border-color:var(--yellow);background:rgba(245,200,66,0.06);min-height:160px;width:120px}
+.silo-box.goal{border-color:var(--teal);background:rgba(94,197,204,0.06)}
+.silo-box-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.silo-box.stuck .silo-box-title{color:var(--red)}
+.silo-box.barrier .silo-box-title{color:var(--yellow)}
+.silo-box.goal .silo-box-title{color:var(--teal)}
+.silo-box-text{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5}
+.silo-arrow{font-size:28px;color:rgba(255,255,255,0.2);flex-shrink:0}
+
+/* ── EVOLUTION GRAPH ── */
+.evo-graph{display:flex;align-items:flex-end;justify-content:center;gap:48px;padding:40px 20px 20px;position:relative}
+.evo-graph::after{content:'';position:absolute;bottom:20px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,var(--red),var(--yellow),var(--teal))}
+.evo-char{display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+.evo-bubble{background:var(--card-l);border:1px solid var(--rule);padding:8px 14px;font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:12px;text-align:center;max-width:140px;position:relative;line-height:1.4}
+.evo-bubble::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid var(--card-l)}
+.evo-figure{display:flex;flex-direction:column;align-items:center}
+.evo-head{border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;color:#fff;letter-spacing:0.05em}
+.evo-body{background:currentColor;border-radius:4px 4px 0 0;margin-top:4px}
+.evo-char.small .evo-head{width:36px;height:36px;background:var(--red);font-size:12px}
+.evo-char.small .evo-body{width:28px;height:40px;color:var(--red);opacity:0.3}
+.evo-char.mid .evo-head{width:44px;height:44px;background:var(--yellow);font-size:13px}
+.evo-char.mid .evo-body{width:34px;height:60px;color:var(--yellow);opacity:0.3}
+.evo-char.tall .evo-head{width:52px;height:52px;background:var(--teal);font-size:14px}
+.evo-char.tall .evo-body{width:40px;height:80px;color:var(--teal);opacity:0.3}
+.evo-label{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;margin-top:12px}
+.evo-char.small .evo-label{color:var(--red)}
+.evo-char.mid .evo-label{color:var(--yellow)}
+.evo-char.tall .evo-label{color:var(--teal)}
+.evo-axis-label{position:absolute;bottom:4px;font-size:9px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2)}
+.evo-axis-label.left{left:10%}
+.evo-axis-label.right{right:10%}
+
+/* ── TIMELINE DIAGRAM ── */
+.timeline-visual{display:flex;align-items:stretch;justify-content:center;gap:0;padding:20px 0}
+.timeline-box{flex:1;max-width:260px;padding:28px 20px;text-align:center;border:1px solid var(--rule);position:relative}
+.timeline-box.before{background:rgba(224,85,85,0.04);border-color:rgba(224,85,85,0.2)}
+.timeline-box.now{background:rgba(245,200,66,0.06);border-color:rgba(245,200,66,0.3);border-width:2px}
+.timeline-box.after{background:rgba(94,197,204,0.04);border-color:rgba(94,197,204,0.2)}
+.timeline-box-label{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.timeline-box.before .timeline-box-label{color:var(--red)}
+.timeline-box.now .timeline-box-label{color:var(--yellow)}
+.timeline-box.after .timeline-box-label{color:var(--teal)}
+.timeline-box-text{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6}
+.timeline-connector{width:40px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.15);font-size:20px;flex-shrink:0}
+.timeline-sub{display:flex;justify-content:center;gap:40px;margin-top:24px;flex-wrap:wrap}
+.timeline-sub-box{background:var(--card);border:1px solid var(--rule);padding:20px 24px;text-align:center;flex:1;min-width:200px;max-width:340px}
+.timeline-sub-label{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+.timeline-sub-text{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6}
+
+/* ── PERCEPTION CHAIN ── */
+.chain-flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;padding:20px 0}
+.chain-node{background:var(--card);border:2px solid;padding:20px 24px;text-align:center;min-width:180px}
+.chain-node.cause{border-color:var(--teal)}
+.chain-node.effect{border-color:var(--yellow)}
+.chain-node-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.chain-node.cause .chain-node-title{color:var(--teal)}
+.chain-node.effect .chain-node-title{color:var(--yellow)}
+.chain-node-text{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5}
+.chain-arrow{font-size:24px;color:rgba(255,255,255,0.2);padding:0 12px;flex-shrink:0}
+
+/* ── 3 CHOICES GRID ── */
+.choices-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:32px 0}
+.choice-card{background:var(--card);border:1px solid var(--rule);padding:28px 24px;position:relative;transition:border-color 0.2s}
+.choice-card:hover{border-color:var(--teal-b)}
+.choice-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;line-height:1;color:var(--teal);opacity:0.15;margin-bottom:12px}
+.choice-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px}
+.choice-text{font-size:13px;line-height:1.7;color:rgba(255,255,255,0.45)}
+.choice-card.warn{border-left:3px solid var(--red)}
+.choice-card.warn .choice-title{color:var(--red)}
+
+/* ── CAPABILITY CARDS ── */
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin:32px 0}
+.cap-card{background:var(--card);border:1px solid var(--rule);padding:28px 24px;text-align:center}
+.cap-icon{font-size:32px;margin-bottom:12px}
+.cap-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;color:var(--teal);margin-bottom:8px}
+.cap-text{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6}
+
+/* ── BELIEF QUESTIONS ── */
+.belief-block{background:var(--card);border:2px solid var(--teal-b);padding:32px;margin:28px 0}
+.belief-q{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:0.02em;color:#fff;line-height:1.2;margin-bottom:12px}
+.belief-answer{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;padding-left:20px;border-left:2px solid var(--teal)}
+
+/* ── FOOTER ── */
+.footer{padding:40px 56px;border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-brand{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--teal)}
+.footer-text{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.5}
+.footer-cta{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;background:var(--teal);color:var(--charcoal);text-decoration:none;transition:all 0.2s}
+.footer-cta:hover{background:var(--teal-d)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .choices-grid,.cap-grid{grid-template-columns:1fr}
+  .evo-graph{gap:24px}
+  .timeline-visual{flex-direction:column;align-items:center}
+  .timeline-connector{transform:rotate(90deg);width:auto;height:40px}
+  .chain-flow{flex-direction:column}
+  .chain-arrow{transform:rotate(90deg);padding:8px 0}
+  .silo-visual{flex-direction:column}
+  .silo-arrow{transform:rotate(90deg)}
+}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .sidebar.mobile-open{display:flex;position:fixed;top:56px;left:0;bottom:0;width:280px;z-index:99;box-shadow:4px 0 20px rgba(0,0,0,0.5)}
+  .hamburger{display:block}
+  .topnav-event{display:none}
+  .hero{padding:48px 24px 40px}
+  .section{padding:48px 24px}
+  .footer{padding:32px 24px}
+  .diagram-wrap{padding:24px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="#" class="topnav-logo" onclick="scrollToSection('hero');return false;">The Confidence Gap <span>/ Program</span></a>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="topnav-right">
+    <span class="topnav-event">SBA · April 30, 2026</span>
+    <a href="https://www.eventbrite.com/e/the-confidence-gap-what-happens-when-capable-people-get-stuck-with-alex-tickets-1982852239425" target="_blank" class="nav-link" style="background:var(--teal);color:var(--charcoal);padding:8px 16px;">Get Tickets</a>
+  </div>
+</nav>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-section">Programme</div>
+    <a href="#hero" class="sb-item active" onclick="scrollToSection('hero');closeMobileNav();" id="sb-hero">
+      <div class="sb-item-num">—</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">Welcome</div>
+        <div class="sb-item-sub">The Confidence Gap</div>
+      </div>
+    </a>
+    <a href="#module-1" class="sb-item" onclick="scrollToSection('module-1');closeMobileNav();" id="sb-mod1">
+      <div class="sb-item-num">01</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">The Silo</div>
+        <div class="sb-item-sub">Where your confidence lives</div>
+      </div>
+    </a>
+    <a href="#module-2" class="sb-item" onclick="scrollToSection('module-2');closeMobileNav();" id="sb-mod2">
+      <div class="sb-item-num">02</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">Perspective vs Perception</div>
+        <div class="sb-item-sub">Cause and effect</div>
+      </div>
+    </a>
+    <a href="#module-3" class="sb-item" onclick="scrollToSection('module-3');closeMobileNav();" id="sb-mod3">
+      <div class="sb-item-num">03</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">Beliefs Under Pressure</div>
+        <div class="sb-item-sub">Extracting the truth</div>
+      </div>
+    </a>
+    <a href="#module-4" class="sb-item" onclick="scrollToSection('module-4');closeMobileNav();" id="sb-mod4">
+      <div class="sb-item-num">04</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">The Evolution</div>
+        <div class="sb-item-sub">N- to P+</div>
+      </div>
+    </a>
+    <a href="#module-5" class="sb-item" onclick="scrollToSection('module-5');closeMobileNav();" id="sb-mod5">
+      <div class="sb-item-num">05</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">Building Capability</div>
+        <div class="sb-item-sub">Responding effectively</div>
+      </div>
+    </a>
+    <a href="#module-6" class="sb-item" onclick="scrollToSection('module-6');closeMobileNav();" id="sb-mod6">
+      <div class="sb-item-num">06</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">Life's 3 Choices</div>
+        <div class="sb-item-sub">Choose, collaborate, defer</div>
+      </div>
+    </a>
+    <a href="#module-7" class="sb-item" onclick="scrollToSection('module-7');closeMobileNav();" id="sb-mod7">
+      <div class="sb-item-num">07</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">You Are Here</div>
+        <div class="sb-item-sub">The timeline model</div>
+      </div>
+    </a>
+    <div class="sb-divider"></div>
+    <div class="sb-section">Resources</div>
+    <a href="https://www.eventbrite.com/e/the-confidence-gap-what-happens-when-capable-people-get-stuck-with-alex-tickets-1982852239425" target="_blank" class="sb-item">
+      <div class="sb-item-num">→</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">Event Tickets</div>
+        <div class="sb-item-sub">Eventbrite · April 30</div>
+      </div>
+    </a>
+    <a href="https://www.instagram.com/thinksmallstarthorribly" target="_blank" class="sb-item">
+      <div class="sb-item-num">→</div>
+      <div class="sb-item-body">
+        <div class="sb-item-label">@thinksmallstarthorribly</div>
+        <div class="sb-item-sub">Instagram</div>
+      </div>
+    </a>
+    <div class="sb-footer">
+      <div class="sb-footer-brand">Think Small, Start Horribly</div>
+      <div class="sb-footer-text">Alex Cooper © 2026<br>Life Circuitry Framework</div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main-content">
+
+    <!-- ═══════════════════════════════════════
+         HERO
+    ═══════════════════════════════════════ -->
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <span class="hero-label">Stirling Business Association · April 30, 2026</span>
+        <h1 class="hero-title">The Confidence<br><em>Gap</em></h1>
+        <p class="hero-subtitle">What happens when capable people get stuck. Not because they lack ability. Because they lack the self-trust to use it outside the one place they built it.</p>
+        <p class="hero-meta">
+          <strong>A live talk and take-home framework by Alex Cooper</strong><br>
+          Balcatta, Perth WA · 1 Hour · $15 / Free for SBA Members
+        </p>
+      </div>
+    </section>
+
+    <!-- EVENT STRIP -->
+    <div class="event-strip">
+      <div class="event-item">
+        <div class="event-num">7</div>
+        <div class="event-label">Framework Modules</div>
+      </div>
+      <div class="event-item">
+        <div class="event-num">1 Hr</div>
+        <div class="event-label">Live Talk</div>
+      </div>
+      <div class="event-item">
+        <div class="event-num">Apr 30</div>
+        <div class="event-label">2026 · Balcatta</div>
+      </div>
+      <div class="event-item">
+        <div class="event-num">$15</div>
+        <div class="event-label">Non-Members / Free SBA</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MODULE 01 — THE SILO
+    ═══════════════════════════════════════ -->
+    <section class="section" id="module-1">
+      <div class="section-inner">
+        <span class="eyebrow">Module 01</span>
+        <h2 class="section-title">The Silo<br><em>Where Your Confidence Lives</em></h2>
+
+        <p class="body-copy">You are confident. That is not the issue. The issue is that your confidence is locked inside a silo. It was built in a specific environment, under specific conditions, with specific people. And it works brilliantly there. The problem is that it does not travel.</p>
+
+        <p class="body-copy">Confidence is domain-specific. It lives where you created it. You built evidence of your capability in one area of your life, and that evidence became the foundation for how you operate. But the moment you step outside that environment, the evidence disappears. And without evidence, confidence collapses.</p>
+
+        <p class="body-copy"><strong>Self-trust is different.</strong> Self-trust is portable. It is the position that says: "I will jump and the net will appear. I trust that I will know what to do when I get there." It does not require familiarity. It does not require proof. It requires only the belief that you are capable of figuring it out, regardless of whether you know the dynamics of that environment.</p>
+
+        <div class="pullquote">
+          <p>"When the pain of staying where you are overcomes the pain of change, you will change."</p>
+        </div>
+
+        <p class="body-copy">The silo you have built starts to become claustrophobic. Uncomfortable. You can feel the walls closing in. But leaving it feels terrifying because of what it invites into your world. Your perspective may be that your entire value is held inside that silo and you cannot create it somewhere else. That is the silo paradox. And it is reinforced by sunk cost: the idea that because you have invested so much into this one area, walking away from it would mean losing everything.</p>
+
+        <p class="body-copy">It would not. But your perception tells you otherwise. And that is where we need to start.</p>
+
+        <!-- SILO DIAGRAM -->
+        <div class="diagram-wrap">
+          <div class="diagram-label">The Silo Model</div>
+          <div class="silo-visual">
+            <div class="silo-box stuck">
+              <div class="silo-box-title">The Silo</div>
+              <div class="silo-box-text">You are here.<br>Stuck inside the environment where your confidence was built.</div>
+            </div>
+            <div class="silo-arrow">→</div>
+            <div class="silo-box barrier">
+              <div class="silo-box-title">The Barrier</div>
+              <div class="silo-box-text">What is stopping you?</div>
+            </div>
+            <div class="silo-arrow">→</div>
+            <div class="silo-box goal">
+              <div class="silo-box-title">Where You Want to Be</div>
+              <div class="silo-box-text">The life you want. Built by you. For you.</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="body-copy">The bridge out of the silo is not more confidence. It is self-trust. The willingness to accept that you will be in the early learning phase again. That you will not have the answers immediately. That the discomfort of not knowing is the price of admission to a bigger life.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         MODULE 02 — PERSPECTIVE VS PERCEPTION
+    ═══════════════════════════════════════ -->
+    <section class="section" id="module-2" style="background:var(--dark);">
+      <div class="section-inner">
+        <span class="eyebrow">Module 02</span>
+        <h2 class="section-title">Perspective vs<br><em>Perception</em></h2>
+
+        <p class="body-copy"><strong>Perspective</strong> is how you interpret reality. It is the lens you look through. <strong>Perception</strong> is what that lens creates. The beliefs you form. The conclusions you draw. The reality you then respond to as though it were objective truth.</p>
+
+        <p class="body-copy">This is a cause and effect relationship. Perspective is the cause. Perception is the effect. And most people have never separated the two.</p>
+
+        <div class="pullquote">
+          <p>"You are not responding to reality. You are reacting to the reality that your conclusions have created."</p>
+        </div>
+
+        <!-- PERCEPTION CHAIN DIAGRAM -->
+        <div class="diagram-wrap">
+          <div class="diagram-label">The Perception Chain</div>
+          <div class="chain-flow">
+            <div class="chain-node cause">
+              <div class="chain-node-title">Perspective</div>
+              <div class="chain-node-text">How you interpret reality.<br>The lens you look through.</div>
+            </div>
+            <div class="chain-arrow">→</div>
+            <div class="chain-node effect">
+              <div class="chain-node-title">Beliefs</div>
+              <div class="chain-node-text">The conclusions your perspective creates.</div>
+            </div>
+            <div class="chain-arrow">→</div>
+            <div class="chain-node effect" style="border-color:var(--red);">
+              <div class="chain-node-title" style="color:var(--red);">Perception</div>
+              <div class="chain-node-text">The reality you now respond to as though it were truth.</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="body-copy">If the tools you use to perceive the world and who you are in it are off, your perceptions will be off. It is very difficult to figure out what to do next if you do not know what is going on now. It is very difficult to make decisions that you trust when you lack clarity over the detail or the tools to comprehend it.</p>
+
+        <p class="body-copy">That is why the perception chain matters. If your lens is distorted, everything downstream of it is distorted too. Your beliefs. Your decisions. Your actions. Your results. And then those results become the new evidence that reinforces the distortion.</p>
+
+        <div class="pullquote">
+          <p>"People do not change when they understand. They change when they feel something meaningful enough to act."</p>
+        </div>
+
+        <p class="body-copy">Understanding the chain is not enough. You need to feel the weight of what it has cost you. The opportunities you did not take. The conversations you avoided. The version of yourself you never became. That is what creates the momentum to do something about it.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         MODULE 03 — BELIEFS UNDER PRESSURE
+    ═══════════════════════════════════════ -->
+    <section class="section" id="module-3">
+      <div class="section-inner">
+        <span class="eyebrow">Module 03</span>
+        <h2 class="section-title">Beliefs Under<br><em>Pressure</em></h2>
+
+        <p class="body-copy">Your beliefs are running the show. They determine what you see, what you ignore, what you pursue, and what you avoid. They are the operating system behind every decision you make. And most of them have never been tested.</p>
+
+        <p class="body-copy">That is the problem. Not that you have beliefs. Everyone does. The problem is that you have never put them under pressure to find out whether they are actually true.</p>
+
+        <p class="body-copy">There are two questions that change everything. They are simple. And they are devastating.</p>
+
+        <!-- BELIEF QUESTIONS -->
+        <div class="belief-block">
+          <div class="belief-q">Question One</div>
+          <div class="belief-answer">"Has everything you have ever believed always turned out to be the truth?"<br><br>The answer is always no. Every single person who has ever been asked this question has answered no. Which means you already know, from your own experience, that your beliefs are not always accurate.</div>
+        </div>
+
+        <div class="belief-block">
+          <div class="belief-q">Question Two</div>
+          <div class="belief-answer">"Could it be possible that some of the things you currently believe are not as close to the truth as you would either want or like?"<br><br>This is the one that lands. Because it is no longer abstract. It is personal. It is present tense. And it opens the door to the possibility that the beliefs driving your decisions right now may not be serving you.</div>
+        </div>
+
+        <p class="body-copy">That is why we need to put our beliefs under pressure. Not to destroy them. To extract something that approximates the truth. Not your version of it. Not the comfortable version. The version that gives you the clearest possible picture of where you actually are and what is actually happening.</p>
+
+        <p class="body-copy">Because without that clarity, every decision you make is built on a foundation that may not be real. And you cannot build a life you trust on a foundation you have never tested.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         MODULE 04 — THE EVOLUTION
+    ═══════════════════════════════════════ -->
+    <section class="section" id="module-4" style="background:var(--dark);">
+      <div class="section-inner">
+        <span class="eyebrow">Module 04</span>
+        <h2 class="section-title">The<br><em>Evolution</em></h2>
+
+        <p class="body-copy">This is the journey. Three versions of the same person at three different stages. Each one thinking differently, speaking differently, and acting differently. The shift is not random. It is trained. It happens in response to the evidence you create that locks in the proof of your capability to respond.</p>
+
+        <!-- EVOLUTION GRAPH -->
+        <div class="diagram-wrap">
+          <div class="diagram-label">The 3-Character Evolution</div>
+          <div class="evo-graph">
+            <div class="evo-char small">
+              <div class="evo-bubble">Negative self-talk.<br>"I trust you."</div>
+              <div class="evo-figure">
+                <div class="evo-head">N−</div>
+                <div class="evo-body"></div>
+              </div>
+              <div class="evo-label">Stage 1</div>
+            </div>
+            <div class="evo-char mid">
+              <div class="evo-bubble">Mixed. Emerging positive.<br>"I trust you... and me."</div>
+              <div class="evo-figure">
+                <div class="evo-head">N−/P+</div>
+                <div class="evo-body"></div>
+              </div>
+              <div class="evo-label">Stage 2</div>
+            </div>
+            <div class="evo-char tall">
+              <div class="evo-bubble">Positive self-talk.<br>"I trust me."</div>
+              <div class="evo-figure">
+                <div class="evo-head">P+</div>
+                <div class="evo-body"></div>
+              </div>
+              <div class="evo-label">Stage 3</div>
+            </div>
+            <div class="evo-axis-label left">Low Confidence</div>
+            <div class="evo-axis-label right">Self-Trust →</div>
+          </div>
+        </div>
+
+        <p class="body-copy"><strong>Stage 1: N−</strong> is where most people start when they are outside their silo. Negative internal dialogue. Doubt. Hesitation. The voice in your head is louder than the voice coming out of your mouth. You defer trust outward: "I trust you" because you do not yet trust yourself in this environment.</p>
+
+        <p class="body-copy"><strong>Stage 2: N−/P+</strong> is the transition. You are still carrying the negative patterns, but positive evidence is starting to accumulate. You have done things. Small things. They worked. The internal dialogue is split. Some days you believe it. Some days you do not. This is the hardest phase because the pull back to Stage 1 is constant.</p>
+
+        <p class="body-copy"><strong>Stage 3: P+</strong> is where self-trust lives. The internal dialogue has shifted. You are no longer looking outward for validation. "I trust me." Not because you know everything. Because you have built enough evidence that you can figure it out. The thoughts, the words, and the actions are aligned.</p>
+
+        <p class="body-copy">This evolution is not instant. It takes time. It takes energy and effort applied consistently over time. And it requires you to accept that you are going to be in the early learning phase again. That is the price. And it is worth paying.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         MODULE 05 — BUILDING CAPABILITY TO RESPOND
+    ═══════════════════════════════════════ -->
+    <section class="section" id="module-5">
+      <div class="section-inner">
+        <span class="eyebrow">Module 05</span>
+        <h2 class="section-title">Building Capability<br><em>To Respond</em></h2>
+
+        <p class="body-copy">Confidence outside the silo is rebuilt through one mechanism: your capability to respond. Not to predict. Not to control. To respond. Effectively. To three things.</p>
+
+        <!-- CAPABILITY CARDS -->
+        <div class="cap-grid">
+          <div class="cap-card">
+            <div class="cap-icon">◇</div>
+            <div class="cap-title">Opportunity</div>
+            <div class="cap-text">When something presents itself, can you respond to it? Can you step forward when the door opens, even if you have never walked through that particular door before?</div>
+          </div>
+          <div class="cap-card">
+            <div class="cap-icon">△</div>
+            <div class="cap-title">Challenge</div>
+            <div class="cap-text">When something pushes back, can you hold your ground? Can you stay in the discomfort long enough to learn from it instead of retreating to what you already know?</div>
+          </div>
+          <div class="cap-card">
+            <div class="cap-icon">▽</div>
+            <div class="cap-title">Risk</div>
+            <div class="cap-text">When the stakes are real, can you make a decision and commit to it? Can you act without certainty and trust yourself to handle whatever comes next?</div>
+          </div>
+        </div>
+
+        <p class="body-copy">To rebuild this capability, you need to accept something uncomfortable: you are going to be in the <strong>early learning phase</strong> again. That means energy and effort applied over time to tasks where you do not yet have mastery. It means being bad at things. It means failing.</p>
+
+        <p class="body-copy">And failure is necessary. You learn more from failure than you ever will from success. Beating yourself up over those failures is not necessary. That is the distinction most people miss. Failure in service of progress is not something to be ashamed of. It is the mechanism through which you build the evidence that eventually becomes self-trust.</p>
+
+        <div class="pullquote red">
+          <p>"Failures made in the interest of progress are far more readily forgiven than errors made in the interest of fucking around."</p>
+        </div>
+
+        <p class="body-copy">The early learning phase is uncomfortable. It is supposed to be. But the discomfort is temporary. The capability you build is not. Every time you respond to an opportunity, a challenge, or a risk and survive it, you are adding to the evidence base. You are training yourself into Stage 2. Then Stage 3. Then a version of yourself that does not need the silo anymore.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         MODULE 06 — LIFE'S 3 CHOICES
+    ═══════════════════════════════════════ -->
+    <section class="section" id="module-6" style="background:var(--dark);">
+      <div class="section-inner">
+        <span class="eyebrow">Module 06</span>
+        <h2 class="section-title">Life's 3<br><em>Choices</em></h2>
+
+        <p class="body-copy">Every decision in your life falls into one of three categories. There are no exceptions. Understanding which one you are operating in at any given moment is the difference between building a life that belongs to you and building one that belongs to someone else.</p>
+
+        <!-- 3 CHOICES GRID -->
+        <div class="choices-grid">
+          <div class="choice-card">
+            <div class="choice-num">01</div>
+            <div class="choice-title">You Choose</div>
+            <div class="choice-text">You make the decision. You own the outcome. You accept the consequences. This is the highest form of agency. It requires the most self-trust and it delivers the most alignment between where you are and where you want to be.</div>
+          </div>
+          <div class="choice-card">
+            <div class="choice-num">02</div>
+            <div class="choice-title">You Collaborate</div>
+            <div class="choice-text">You work with someone. You share the decision. You negotiate the terms. This requires clarity about what you want and the ability to communicate it. It works when both parties bring value to the table.</div>
+          </div>
+          <div class="choice-card warn">
+            <div class="choice-num">03</div>
+            <div class="choice-title">You Defer</div>
+            <div class="choice-text">You hand the decision to a third party. You let someone else choose for you. And the rule is simple: lower your expectations around the result. Because you will end up repurposed as a resource for the achievement of their goals, not your own.</div>
+          </div>
+        </div>
+
+        <p class="body-copy">When you defer, you enter a compliance-based relationship. You are no longer driving. You are a passenger. And passengers do not get to complain about the destination.</p>
+
+        <p class="body-copy">Most people who are stuck in the silo are operating in Choice 3 more often than they realise. They have handed over control to their employer, their partner, their circumstances, their fear. And the longer they stay there, the harder it becomes to remember what it felt like to choose.</p>
+
+        <div class="pullquote">
+          <p>"Relationships are traded on value. When the value goes away, so does the relationship."</p>
+        </div>
+
+        <p class="body-copy">This is not cynical. It is honest. And honesty is the only foundation that holds weight. If you want to operate in Choice 1 or Choice 2, you need to bring value. You need to know what yours is. And you need to be willing to put it on the table.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         MODULE 07 — YOU ARE HERE → WHO YOU ARE
+    ═══════════════════════════════════════ -->
+    <section class="section" id="module-7">
+      <div class="section-inner">
+        <span class="eyebrow">Module 07</span>
+        <h2 class="section-title">You Are Here →<br><em>Who You Are</em></h2>
+
+        <p class="body-copy">This is the timeline. Where you have been. Where you are now. Where you are going. Most people skip the middle one. They spend all their time thinking about the past or fantasising about the future. And they never deal honestly with the present.</p>
+
+        <!-- TIMELINE DIAGRAM -->
+        <div class="diagram-wrap">
+          <div class="diagram-label">The Timeline Model</div>
+          <div class="timeline-visual">
+            <div class="timeline-box before">
+              <div class="timeline-box-label">Before</div>
+              <div class="timeline-box-text">Where you have been. The experiences, the patterns, the beliefs you inherited.</div>
+            </div>
+            <div class="timeline-connector">→</div>
+            <div class="timeline-box now">
+              <div class="timeline-box-label">Now</div>
+              <div class="timeline-box-text">Where you are. The current circumstances of your life. Honestly.</div>
+            </div>
+            <div class="timeline-connector">→</div>
+            <div class="timeline-box after">
+              <div class="timeline-box-label">After</div>
+              <div class="timeline-box-text">Where you are going. The life you are building. The person you are becoming.</div>
+            </div>
+          </div>
+          <div class="timeline-sub">
+            <div class="timeline-sub-box">
+              <div class="timeline-sub-label">You Are Here · Current</div>
+              <div class="timeline-sub-text">You must accept the current circumstances of your life honestly in order to make meaningful progress towards the life you truly want.</div>
+            </div>
+            <div class="timeline-sub-box">
+              <div class="timeline-sub-label">Who You Are · Future</div>
+              <div class="timeline-sub-text">You will be far less resistant to living in a world that was created by you, because it was created for you.</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="body-copy">"You Are Here" is the hardest part. Not because the truth is always painful. But because most people have spent years avoiding it. They have constructed a version of their current reality that is more comfortable than the actual one. And that constructed version is what keeps them stuck.</p>
+
+        <p class="body-copy">You cannot navigate to a destination if you do not know your starting point. Every GPS system in the world requires two coordinates: where you are and where you want to go. If either one is wrong, the directions are useless. And most people have the first one wrong.</p>
+
+        <div class="pullquote">
+          <p>"You will be far less resistant to living in a world that was created by you, because it was created for you."</p>
+        </div>
+
+        <p class="body-copy">That is the promise of this work. Not that it will be easy. Not that it will be comfortable. But that the life you build on the other side of this process will feel like yours. Because it will be. Every decision, every risk, every failure, every success will belong to you. And that is the difference between existing and living.</p>
+
+        <p class="body-copy">The confidence gap is not a flaw. It is a signal. It is telling you that you have outgrown the silo. That you are ready for more. The question is not whether you are capable. You already know you are. The question is whether you trust yourself enough to prove it somewhere new.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         CLOSING / CTA
+    ═══════════════════════════════════════ -->
+    <section class="section" id="closing" style="background:var(--dark);text-align:center;">
+      <div class="section-inner" style="max-width:700px;margin:0 auto;">
+        <span class="eyebrow">What Happens Next</span>
+        <h2 class="section-title" style="text-align:center;">You Shouldn't Have to<br><em>Stay Stuck</em></h2>
+
+        <p class="body-copy" style="text-align:center;margin:0 auto 24px;">You should not have to keep performing inside a silo that no longer fits. You should not have to choose between the safety of what you know and the life you actually want. And you should not have to figure this out alone.</p>
+
+        <p class="body-copy" style="text-align:center;margin:0 auto 32px;">This talk is one hour. The framework is yours to keep. The mini program above is your take-home resource. Read it. Sit with it. Come back to it when you need to.</p>
+
+        <p style="margin-bottom:32px;">
+          <a href="https://www.eventbrite.com/e/the-confidence-gap-what-happens-when-capable-people-get-stuck-with-alex-tickets-1982852239425" target="_blank" style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;background:var(--teal);color:var(--charcoal);border:none;padding:18px 48px;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.2s;">Get Tickets — April 30</a>
+        </p>
+
+        <p class="body-copy" style="text-align:center;margin:0 auto;font-size:13px;">
+          Stirling Business Association · Balcatta, Perth WA<br>
+          $15 Non-Members · Free for SBA Members
+        </p>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div>
+        <div class="footer-brand">The Confidence Gap</div>
+        <div class="footer-text">Think Small, Start Horribly · Alex Cooper © 2026<br>A Life Circuitry Framework</div>
+      </div>
+      <a href="https://www.eventbrite.com/e/the-confidence-gap-what-happens-when-capable-people-get-stuck-with-alex-tickets-1982852239425" target="_blank" class="footer-cta">Get Tickets →</a>
+    </footer>
+
+  </main>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+// Mobile nav toggle
+function toggleMobileNav(){
+  const sidebar=document.getElementById('sidebar');
+  const hamburger=document.getElementById('hamburger');
+  sidebar.classList.toggle('mobile-open');
+  hamburger.classList.toggle('open');
+}
+function closeMobileNav(){
+  const sidebar=document.getElementById('sidebar');
+  const hamburger=document.getElementById('hamburger');
+  sidebar.classList.remove('mobile-open');
+  hamburger.classList.remove('open');
+}
+
+// Smooth scroll to section
+function scrollToSection(id){
+  const el=document.getElementById(id);
+  if(el){
+    const main=document.getElementById('main-content');
+    const top=el.offsetTop;
+    main.scrollTo({top:top,behavior:'smooth'});
+  }
+}
+
+// Active sidebar tracking
+(function(){
+  const main=document.getElementById('main-content');
+  const sections=['hero','module-1','module-2','module-3','module-4','module-5','module-6','module-7'];
+  const sidebarIds=['sb-hero','sb-mod1','sb-mod2','sb-mod3','sb-mod4','sb-mod5','sb-mod6','sb-mod7'];
+
+  function updateActive(){
+    let current='hero';
+    const scrollTop=main.scrollTop;
+    for(let i=sections.length-1;i>=0;i--){
+      const el=document.getElementById(sections[i]);
+      if(el && el.offsetTop <= scrollTop + 120){
+        current=sections[i];
+        break;
+      }
+    }
+    const idx=sections.indexOf(current);
+    sidebarIds.forEach((id,i)=>{
+      const el=document.getElementById(id);
+      if(el){
+        if(i===idx) el.classList.add('active');
+        else el.classList.remove('active');
+      }
+    });
+  }
+
+  main.addEventListener('scroll',updateActive);
+  updateActive();
+})();
+</script>
+
+</body>
+</html>
